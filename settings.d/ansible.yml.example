@@ -1,3 +1,5 @@
 ---
 :enabled: true
 :ansible_working_dir: '~/.foreman-ansible'
+# make sure foreman-proxy has rwx permissions to role files
+:roles_dir: '/etc/ansible/roles'
