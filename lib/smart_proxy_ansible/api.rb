@@ -2,7 +2,10 @@ module Proxy
   module Ansible
     class Api < Sinatra::Base
       get '/roles' do
-        `ls /etc/ansible/roles/`.split("\n").to_json
+        files = Dir.glob('/etc/ansible/roles/*').map do |path|
+          path.split('/').last
+        end
+        files.to_json
       end
 
       get '/roles/:role_name/variables' do |role_name|
