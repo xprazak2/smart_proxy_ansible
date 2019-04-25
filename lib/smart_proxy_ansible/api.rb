@@ -32,6 +32,14 @@ module Proxy
         end
       end
 
+      post '/playbooks' do
+        begin
+          PlaybooksReader.new.read_playbooks(request.body.string)
+        rescue => e
+          { :warnings => [], :errors => [e.message], :playbooks => [] }
+        end
+      end
+
       private
 
       def extract_variables(role_name)

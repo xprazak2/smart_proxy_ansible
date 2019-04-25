@@ -37,5 +37,7 @@ module Proxy
     class ReadConfigFileException < Proxy::Ansible::Exception; end
     class ReadRolesException < Proxy::Ansible::Exception; end
     class ReadVariablesException < Proxy::Ansible::Exception; end
+    class ReadPlaybooksException < Proxy::Ansible::Exception; end
+    end
   end
 end
