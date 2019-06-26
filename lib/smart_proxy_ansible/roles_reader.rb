@@ -36,7 +36,7 @@ module Proxy
         end
 
         def default_config_file
-          File.join ::Proxy::Ansible::Plugin.settings.ansible_working_dir, 'ansible.cfg'
+          File.join ::Proxy::Ansible::Plugin.settings.ansible_dir, '.ansible.cfg'
         end
 
         def read_roles(roles_path)

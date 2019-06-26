@@ -1,4 +1,7 @@
+require 'pry-remote'
+
 module Proxy
+
   module Ansible
     # API endpoints. Most of the code should be calling other classes,
     # please keep the actual implementation of the endpoints outside
@@ -37,8 +40,11 @@ module Proxy
       def extract_variables(role_name)
         variables = {}
         RolesReader.roles_path.split(':').each do |path|
-          variables[role_name] ||= VariablesExtractor
-                                   .extract_variables("#{path}/#{role_name}")
+           role_path = "#{path}/#{role_name}"
+           if File.directory?(role_path)
+             variables[role_name] ||= VariablesExtractor
+                                      .extract_variables("#{path}/#{role_name}")
+           end
         end
         variables
       end
