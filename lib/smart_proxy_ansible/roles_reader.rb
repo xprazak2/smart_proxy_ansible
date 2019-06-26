@@ -5,19 +5,17 @@ module Proxy
     # Implements the logic needed to read the roles and associated information
     class RolesReader
       class << self
-        DEFAULT_CONFIG_FILE = '/etc/ansible/ansible.cfg'.freeze
-        DEFAULT_ROLES_PATH = '/etc/ansible/roles'.freeze
-
+        
         def list_roles
           roles_path.split(':').map { |path| read_roles(path) }.flatten
         end
 
         def roles_path(roles_line = roles_path_from_config)
-          # Default to /etc/ansible/roles if none found
-          return DEFAULT_ROLES_PATH if roles_line.empty?
+          # Default to value from settings
+          return default_roles_paths if roles_line.empty?
           roles_path_key = roles_line.first.split('=').first.strip
           # In case of commented roles_path key "#roles_path", return default
-          return DEFAULT_ROLES_PATH unless roles_path_key == 'roles_path'
+          return default_roles_paths unless roles_path_key == 'roles_path'
           roles_line.first.split('=').last.strip
         end
 
@@ -33,6 +31,14 @@ module Proxy
 
         private
 
+        def default_roles_paths
+          ::Proxy::Ansible::Plugin.settings.ansible_roles_path
+        end
+
+        def default_config_file
+          File.join ::Proxy::Ansible::Plugin.settings.ansible_working_dir, 'ansible.cfg'
+        end
+
         def read_roles(roles_path)
           rescue_and_raise_file_exception ReadRolesException,
                                           roles_path, 'roles' do
@@ -44,8 +50,8 @@ module Proxy
 
         def roles_path_from_config
           rescue_and_raise_file_exception ReadConfigFileException,
-                                          DEFAULT_CONFIG_FILE, 'config file' do
-            File.readlines(DEFAULT_CONFIG_FILE).select do |line|
+                                          default_config_file, 'config file' do
+            File.readlines(default_config_file).select do |line|
               line =~ /^\s*roles_path/
             end
           end
